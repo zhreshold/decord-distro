@@ -1,0 +1,96 @@
+env:
+  global:
+      - REPO_DIR=decord
+      - BUILD_COMMIT=3d9a2cfb1184efc2b8e2c864b638542cacf995f6
+      - PLAT=x86_64
+      - UNICODE_WIDTH=32
+      - NP_BUILD_DEP="numpy==1.13.3"
+      - NP_TEST_DEP="numpy==1.13.3"
+      - GEN_DEPS="pyyaml psutil pytest beautifulsoup4 wheel"
+      #- WHEELHOUSE_UPLOADER_USERNAME=travis-worker
+      # Following generated with
+      # travis encrypt -r MacPython/astropy-wheels WHEELHOUSE_UPLOADER_SECRET=<the api key>
+      #- secure:
+      #    "MNKyBWOzu7JAUmC0Y+JhPKfytXxY/ADRmUIMEWZV977FLZPgYctqd+lqel2QIFgdHDO1CIdTSymOOFZckM9ICUXg9Ta+8oBjSvAVWO1ahDcToRM2DLq66fKg+NKimd2OfK7x597h/QmUSl4k8XyvyyXgl5jOiLg/EJxNE2r83IA="
+      # Get extra wheels from Rackspace container
+      #- MANYLINUX_URL=https://5cf40426d9f06eb7461d-6fe47d9331aba7cd62fc36c7196769e4.ssl.cf2.rackcdn.com
+
+language: python
+# Default Python version is usually 2.7
+python: 3.5
+sudo: required
+dist: trusty
+services: docker
+
+matrix:
+  exclude:
+      # Exclude the default Python 3.5 build
+      - python: 3.5
+  include:
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.7
+        - NP_BUILD_DEP=numpy==1.14.5
+        - NP_TEST_DEP=numpy==1.14.5
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.7
+        - PLAT=i686
+        - NP_BUILD_DEP=numpy==1.14.5
+        - NP_TEST_DEP=numpy==1.14.5
+        # There are no wheels for Matplotlib with Python 3.7 for 32-bit
+        - GEN_DEPS="pyyaml psutil pytest h5py beautifulsoup4 wheel"
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.5
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.5
+        - PLAT=i686
+        # The latest wheel that is used for Matplotlib is 2.0.0b1, which has
+        # bugs that cause Astropy test failures, so we don't include it here.
+        - GEN_DEPS="pyyaml psutil pytest h5py beautifulsoup4 wheel"
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.6
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.6
+        - PLAT=i686
+    - os: osx
+      language: generic
+      env:
+        - MB_PYTHON_VERSION=3.5
+    - os: osx
+      language: generic
+      env:
+        - MB_PYTHON_VERSION=3.6
+    - os: osx
+      language: generic
+      env:
+        - MB_PYTHON_VERSION=3.7
+        - NP_BUILD_DEP=numpy==1.14.5
+        - NP_TEST_DEP=numpy==1.14.5
+
+before_install:
+    - BUILD_DEPENDS="$NP_BUILD_DEP Cython jinja2 wheel"
+    - TEST_DEPENDS="$NP_TEST_DEP $GEN_DEPS"
+    - source multibuild/common_utils.sh
+    - source multibuild/travis_steps.sh
+    - before_install
+
+install:
+    # Maybe get and clean and patch source
+    - clean_code $REPO_DIR $BUILD_COMMIT
+    - build_wheel $REPO_DIR $PLAT
+
+script:
+    - install_run $PLAT
+
+after_success:
+    # Upload wheels to Rackspace container
+    # - pip install wheelhouse-uploader
+    # - python -m wheelhouse_uploader upload --local-folder
+    #       ${TRAVIS_BUILD_DIR}/wheelhouse/
+    #       --no-update-index
+    #       wheels
