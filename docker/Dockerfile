@@ -1,5 +1,8 @@
 FROM quay.io/pypa/manylinux2010_x86_64:latest
 
+# Get curl
+RUN yum install curl -y
+
 # CMAKE
 RUN curl -O -L https://cmake.org/files/v3.9/cmake-3.9.0.tar.gz && \
     tar -xf cmake-3.9.0.tar.gz && \
