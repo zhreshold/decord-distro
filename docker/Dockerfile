@@ -1,7 +1,4 @@
-FROM quay.io/pypa/manylinux2010_x86_64:latest
-
-# Get curl
-RUN yum install curl -y
+FROM quay.io/pypa/manylinux1_x86_64:latest
 
 # CMAKE
 RUN curl -O -L https://cmake.org/files/v3.9/cmake-3.9.0.tar.gz && \
@@ -46,8 +43,8 @@ RUN cd ~/ffmpeg_sources && \
     rm -rf ~/openssl_build
 
 RUN cd ~/ffmpeg_sources && \
-    curl -O -L http://www.nasm.us/pub/nasm/releasebuilds/2.13.02/nasm-2.13.02.tar.bz2 && \
-    tar -xf nasm-2.13.02.tar.bz2 && cd nasm-2.13.02 && ./autogen.sh && \
+    curl -O -L http://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.bz2 && \
+    tar -xf nasm-2.14.02.tar.bz2 && cd nasm-2.14.02 && ./autogen.sh && \
     ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
     make install
