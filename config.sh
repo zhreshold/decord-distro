@@ -4,6 +4,13 @@
 function pre_build {
     # Any stuff that you need to do before you start building the wheels
     # Runs in the root directory of this repository.
+    if [ -n "$IS_OSX" ]; then
+        echo "pre_build on max..."
+        brew update
+        brew install ffmpeg
+    else
+        echo "pre_build on linux..."
+    fi
     pushd decord
     mkdir build
     pushd build
@@ -64,6 +71,8 @@ function build_wheel_cmd {
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
+    # replace a modified version of setup.py
+    cp setup.py decord/python/
     (cd decord/python && $cmd $wheelhouse)
     repair_wheelhouse $wheelhouse
 }
