@@ -4,11 +4,13 @@
 function pre_build {
     # Any stuff that you need to do before you start building the wheels
     # Runs in the root directory of this repository.
-    cd decord
+    pushd decord
     mkdir build
-    cd build
+    pushd build
     cmake ..
     make
+    popd
+    popd
 }
 
 function build_wheel_cmd {
@@ -24,6 +26,7 @@ function build_wheel_cmd {
     #     WHEEL_SDIR  (optional, default "wheelhouse")
     #     BUILD_DEPENDS (optional, default "")
     #     MANYLINUX_URL (optional, default "") (via pip_opts function)
+    pwd
     local cmd=${1:-pip_wheel_cmd}
     local repo_dir=${2:-$REPO_DIR}
     [ -z "$repo_dir" ] && echo "repo_dir not defined" && exit 1
@@ -34,6 +37,7 @@ function build_wheel_cmd {
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
+    echo $repo_dir
     (cd $repo_dir/python && $cmd $wheelhouse)
     repair_wheelhouse $wheelhouse
 }
