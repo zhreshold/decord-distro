@@ -1,7 +1,7 @@
 env:
   global:
       - REPO_DIR=decord
-      - BUILD_COMMIT=3d9a2cfb1184efc2b8e2c864b638542cacf995f6
+      - BUILD_COMMIT=v0.1.0
       # pip dependencies to _build_ your project
       - BUILD_DEPENDS="Cython numpy"
       # pip dependencies to _test_ your project.  Include any dependencies
