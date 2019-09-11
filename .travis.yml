@@ -88,4 +88,5 @@ script:
     - install_run $PLAT
 
 after_success:
+    - source config.sh
     - twine_upload
