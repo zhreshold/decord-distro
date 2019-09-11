@@ -87,6 +87,17 @@ install:
 script:
     - install_run $PLAT
 
-after_success:
-    - source config.sh
-    - twine_upload
+after_success: |
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      echo "Installing twine for linux"
+      pip install --user twine
+      pip install --user --upgrade six
+    fi
+
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      echo "Installing twine for OS X"
+      pip install twine
+      pip install --upgrade pyOpenSSL
+    fi
+    echo "Uploading"
+    twine upload -u ${PYPIUSER} -p ${PYPIPASS} --skip-existing ${TRAVIS_BUILD_DIR}/wheelhouse/decord*

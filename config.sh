@@ -86,18 +86,3 @@ function run_tests {
     python -c 'import sys; import decord; sys.exit()'
     python -m unittest test
 }
-
-function twine_upload {
-    if [ -n "$IS_OSX" ]; then
-      echo "Installing twine for OS X"
-      pip install --user twine
-      pip install --user --upgrade six
-    else
-      echo "Installing twine for linux"
-      pip install twine
-      pip install --upgrade pyOpenSSL
-    fi
-
-    echo "Uploading"
-    twine upload -u ${PYPIUSER} -p ${PYPIPASS} --skip-existing ${TRAVIS_BUILD_DIR}/wheelhouse/decord*
-}
