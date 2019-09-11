@@ -37,10 +37,7 @@ function build_wheel_cmd {
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
-    echo $repo_dir
-    pwd
-    ls
-    (cd $repo_dir/python && $cmd $wheelhouse)
+    (cd decord/python && $cmd $wheelhouse)
     repair_wheelhouse $wheelhouse
 }
 
