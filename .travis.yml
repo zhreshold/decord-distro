@@ -89,6 +89,5 @@ script:
 
 after_success:
     - echo "after_success"
-    - source upload_pypi.sh
-    - twine_upload
+    - bash ./upload_pypi.sh
     
