@@ -9,6 +9,8 @@ function pre_build {
     pushd build
     cmake ..
     make
+    mkdir -p /tmp/build
+    cp libdecord.so /tmp/build/libdecord.so
     popd
     popd
 }
