@@ -84,7 +84,6 @@ install:
     - build_wheel $REPO_DIR $PLAT
 
 script:
-    - source travis_custom_docker.sh
     - install_run $PLAT
 
 after_success:

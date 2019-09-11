@@ -15,6 +15,17 @@ function pre_build {
     popd
 }
 
+function repair_wheelhouse {
+    local in_dir=$1
+    local out_dir=${2:-$in_dir}
+    for whl in $in_dir/*.whl; do
+        auditwheel repair $whl -w $out_dir/
+        # Remove unfixed if writing into same directory
+        if [ "$in_dir" == "$out_dir" ]; then rm $whl; fi
+    done
+    chmod -R a+rwX $out_dir
+}
+
 function build_wheel_cmd {
     # Builds wheel with named command, puts into $WHEEL_SDIR
     #
