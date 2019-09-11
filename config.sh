@@ -18,12 +18,24 @@ function pre_build {
 function repair_wheelhouse {
     local in_dir=$1
     local out_dir=${2:-$in_dir}
+    echo $out_dir
     for whl in $in_dir/*.whl; do
+        # rename to py2.py3, also update with timestamp if not built from release
+        if [ -z "$TRAVIS_TAG" ]; then
+            local today=b`date +"%Y%m%d"`
+            echo $today
+            mv $whl ${whl//-py3/$today-py2.py3}
+        else
+            mv $whl ${whl//-py3/-py2.py3}
+        fi
+        
         auditwheel repair $whl -w $out_dir/
         # Remove unfixed if writing into same directory
         if [ "$in_dir" == "$out_dir" ]; then rm $whl; fi
+        ls $out_dir/
     done
     chmod -R a+rwX $out_dir
+    
 }
 
 function build_wheel_cmd {
@@ -56,6 +68,10 @@ function build_wheel_cmd {
 
 function run_tests {
     # Runs tests on installed distribution from an empty directory
+    echo "Starting tests"
+    pwd
+    ls
     python --version
     python -c 'import sys; import decord; sys.exit()'
+    python -m unittest tests/test
 }
