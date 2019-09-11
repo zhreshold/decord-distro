@@ -24,14 +24,16 @@ function repair_wheelhouse {
         if [ -z "$TRAVIS_TAG" ]; then
             local today=b`date +"%Y%m%d"`
             echo $today
-            mv $whl ${whl//-py3/$today-py2.py3}
+            local new_whl=${whl//-py3/$today-py2.py3}
+            mv $whl $new_whl
         else
-            mv $whl ${whl//-py3/-py2.py3}
+            local new_whl=${whl//-py3/-py2.py3}
+            mv $whl $new_whl
         fi
         
-        auditwheel repair $whl -w $out_dir/
+        auditwheel repair $new_whl -w $out_dir/
         # Remove unfixed if writing into same directory
-        if [ "$in_dir" == "$out_dir" ]; then rm $whl; fi
+        if [ "$in_dir" == "$out_dir" ]; then rm $new_whl; fi
         ls $out_dir/
     done
     chmod -R a+rwX $out_dir
