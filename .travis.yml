@@ -17,8 +17,6 @@ env:
       #    "MNKyBWOzu7JAUmC0Y+JhPKfytXxY/ADRmUIMEWZV977FLZPgYctqd+lqel2QIFgdHDO1CIdTSymOOFZckM9ICUXg9Ta+8oBjSvAVWO1ahDcToRM2DLq66fKg+NKimd2OfK7x597h/QmUSl4k8XyvyyXgl5jOiLg/EJxNE2r83IA="
       # Get extra wheels from Rackspace container
       #- MANYLINUX_URL=https://5cf40426d9f06eb7461d-6fe47d9331aba7cd62fc36c7196769e4.ssl.cf2.rackcdn.com
-      - PYPIUSER:
-        - secure: OV72ML7xVbvbhn+RzlRA3+rCRl6N1ARozBRC47+iTCByLQX16MQFaDTPM4D+jHXnao3as3enaTJwUZPgJEc4PteiiZui49Djci0FQRBkXwLmXGdpMD9EsS2wsRm6lRCgEXCdDRxFuwHjoMDfs+3ykMSwyFaEnkduJ8RAzskiL+5rgfszWEpZdGSgpEOxBtSHFkxcBJPRpcN6PrDbrexP0AunBVMEyjsLxwEuaexwhgVK2AxfJ2kHJEbSgK+36abU6MvhHubvJSG0jClcKdStx/5r4m/wRtej7F7xJSIPeorm3zoh4aiqi5vLDTeFW9i9tXhpkJ9K2khbYj+tzY11ja2XHCDFGGfcUg+6vsPHiumBqr1/iUSIZyJPU08+YD2YyAA9U66zwoF0MPrOCu17YaeGw0ZaRavs0yCKXGULKYy0oRlfNj5DMgzjm+aKdAiFd9D9MC7rSMSd+Hsx8e+EMvoDPib5FddUlfiFcl2fnO0QuE/7ogZSyTvNUjANLZ0dJSm2BXQc029QFQy8/aqH+RW69SMLIVius6C9YpYrJAppLgganoXYKRIosmZMNR+hp9YiotROj2P+nw+oDwb8tUVIwtJssU8GpUWuyGroqrUR+Pa5cq4Kp4mnkMz1AuBk9JwQe8f9BtYnEMlY4dAdzXPbNSqt0CuuAZFAJKHvmqs=
 
 
 language: python
@@ -90,10 +88,14 @@ script:
     - install_run $PLAT
 
 after_success:
-    # Upload wheels to Rackspace container
-    # - pip install wheelhouse-uploader
-    # - python -m wheelhouse_uploader upload --local-folder
-    #       ${TRAVIS_BUILD_DIR}/wheelhouse/
-    #       --no-update-index
-    #       wheels
-    - echo $PYPIUSER
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      pip install --user twine
+      pip install --user --upgrade six
+    fi
+
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      pip install twine
+      pip install --upgrade pyOpenSSL
+    fi
+
+    twine upload -u ${PYPIUSER} -p ${PYPIPASS} --skip-existing ${TRAVIS_BUILD_DIR}/wheelhouse/decord*
