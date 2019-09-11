@@ -1,0 +1,6 @@
+[submodule "decord"]
+	path = decord
+	url = https://github.com/zhreshold/decord.git
+[submodule "multibuild"]
+	path = multibuild
+	url = https://github.com/matthew-brett/multibuild
