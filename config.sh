@@ -27,16 +27,9 @@ function repair_wheelhouse {
     local out_dir=${2:-$in_dir}
     echo $out_dir
     for whl in $in_dir/*.whl; do
-        # rename to py2.py3, also update with timestamp if not built from release
-        if [ -z "$TRAVIS_TAG" ]; then
-            local today=b`date +"%Y%m%d"`
-            echo $today
-            local new_whl=${whl//-py3/$today-py2.py3}
-            mv $whl $new_whl
-        else
-            local new_whl=${whl//-py3/-py2.py3}
-            mv $whl $new_whl
-        fi
+        # rename to py2.py3
+        local new_whl=${whl//-py3/-py2.py3}
+        mv $whl $new_whl
         
         auditwheel repair $new_whl -w $out_dir/
         # Remove unfixed if writing into same directory
