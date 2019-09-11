@@ -71,9 +71,18 @@ function build_wheel_cmd {
 function run_tests {
     # Runs tests on installed distribution from an empty directory
     echo "Starting tests"
+
+    if [ -n "$IS_OSX" ]; then
+      echo "Running for OS X"
+      cd ../tests/
+    else
+      echo "Running for linux"
+      cd /io/tests/
+    fi
+
     pwd
     ls
     python --version
     python -c 'import sys; import decord; sys.exit()'
-    python -m unittest tests/test
+    python -m unittest test
 }
