@@ -84,6 +84,7 @@ install:
     - build_wheel $REPO_DIR $PLAT
 
 script:
+    - source travis_custom_docker.sh
     - install_run $PLAT
 
 after_success:
@@ -93,3 +94,4 @@ after_success:
     #       ${TRAVIS_BUILD_DIR}/wheelhouse/
     #       --no-update-index
     #       wheels
+    - echo "Success"
