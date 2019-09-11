@@ -38,6 +38,8 @@ function build_wheel_cmd {
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
     echo $repo_dir
+    pwd
+    ls
     (cd $repo_dir/python && $cmd $wheelhouse)
     repair_wheelhouse $wheelhouse
 }
