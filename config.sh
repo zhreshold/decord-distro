@@ -14,7 +14,6 @@ function pre_build {
         set -x
         brew update
         set +x
-        brew install cmake
         brew install ffmpeg --ignore-dependencies python
     else
         echo "pre_build on linux..."
