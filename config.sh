@@ -74,6 +74,10 @@ function build_wheel_cmd {
     start_spinner
     if [ -n "$(is_function "pre_build")" ]; then pre_build; fi
     stop_spinner
+    if [ -n "$IS_OSX" ]; then
+        get_macpython_environment $MB_PYTHON_VERSION venv
+        source venv/bin/activate
+    fi
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
