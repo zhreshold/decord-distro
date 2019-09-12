@@ -24,7 +24,7 @@ function pre_build {
     pushd build
     if [ -n "$IS_OSX" ]; then
         clang --version
-        cmake .. -DCMAKE_OSX_ARCHITECTURES=i386
+        cmake .. -DCMAKE_OSX_ARCHITECTURES="x86_64"
     else
         cmake ..
     fi
