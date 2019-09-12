@@ -31,6 +31,7 @@ function pre_build {
     make
     mkdir -p /tmp/build
     cp libdecord.* /tmp/build/
+    export DECORD_LIBRARY_PATH=/tmp/build/
     popd
     popd
 }
