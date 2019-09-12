@@ -22,10 +22,14 @@ function pre_build {
     pushd decord
     mkdir build
     pushd build
-    cmake ..
+    if [ -n "$IS_OSX" ]; then
+        cmake .. -DCMAKE_OSX_ARCHITECTURES=x86_64
+    else
+        cmake ..
+    fi
     make
     mkdir -p /tmp/build
-    cp libdecord.so /tmp/build/libdecord.so
+    cp libdecord.* /tmp/build/
     popd
     popd
 }
