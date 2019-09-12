@@ -1,13 +1,21 @@
 # Define custom utilities
 # Test for macOS with [ -n "$IS_OSX" ]
 
+function install_delocate {
+    check_pip
+    $PIP_CMD install git+https://github.com/zhreshold/delocate@fix-deep-init
+}
+
 function pre_build {
     # Any stuff that you need to do before you start building the wheels
     # Runs in the root directory of this repository.
     if [ -n "$IS_OSX" ]; then
         echo "pre_build on max..."
+        set -x
         brew update
-        brew install cmake ffmpeg
+        set +x
+        brew install cmake
+        brew install ffmpeg --ignore-dependencies python
     else
         echo "pre_build on linux..."
     fi
