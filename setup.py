@@ -41,12 +41,18 @@ LIBS, VERSION = get_lib_path()
 long_description = (
 """Decord Python Package
 ========================
+
 `Decord <https://github.com/zhreshold/decord>`_ provides convenient video slicing methods based on a thin wrapper on top of hardware accelerated video decoders.
+
 Installation
 ------------
+
 To install, use:
+
 .. code-block:: bash
+
     pip install decord --upgrade
+
 """)
 
 if 'TRAVIS_TAG' in os.environ and os.environ['TRAVIS_TAG'].startswith('patch-'):

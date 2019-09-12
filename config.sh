@@ -7,7 +7,7 @@ function pre_build {
     if [ -n "$IS_OSX" ]; then
         echo "pre_build on max..."
         brew update
-        brew install ffmpeg
+        brew install cmake ffmpeg
     else
         echo "pre_build on linux..."
     fi
