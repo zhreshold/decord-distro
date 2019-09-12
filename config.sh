@@ -11,9 +11,10 @@ function pre_build {
     # Runs in the root directory of this repository.
     if [ -n "$IS_OSX" ]; then
         echo "pre_build on max..."
-        set -x
-        brew update
-        set +x
+        export HOMEBREW_NO_GITHUB_API=1
+        export HOMEBREW_NO_AUTO_UPDATE=1
+        export HOMEBREW_NO_ANALYTICS=1
+        brew unlink python
         brew install ffmpeg --ignore-dependencies python
     else
         echo "pre_build on linux..."
