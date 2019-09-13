@@ -40,13 +40,6 @@ matrix:
       language: generic
       osx_image: xcode8.3
       env:
-        - MB_PYTHON_VERSION=2.7
-        - NP_BUILD_DEP=numpy==1.14.5
-        - NP_TEST_DEP=numpy==1.14.5
-    - os: osx
-      language: generic
-      osx_image: xcode8.3
-      env:
         - MB_PYTHON_VERSION=3.5
         - NP_BUILD_DEP=numpy==1.14.5
         - NP_TEST_DEP=numpy==1.14.5
