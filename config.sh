@@ -90,6 +90,7 @@ function build_wheel_cmd {
     fi
     # replace a modified version of setup.py
     cp setup.py decord/python/
+    cat decord/python/setup.py
     (cd decord/python && $cmd $wheelhouse)
     repair_wheelhouse $wheelhouse
 }
