@@ -56,7 +56,7 @@ function repair_wheelhouse {
             ls $out_dir/
         done
         chmod -R a+rwX $out_dir
-    done
+    fi
     
 }
 
