@@ -40,17 +40,23 @@ function repair_wheelhouse {
     local in_dir=$1
     local out_dir=${2:-$in_dir}
     echo $out_dir
-    for whl in $in_dir/*.whl; do
-        # rename to py2.py3
-        local new_whl=${whl//-py3/-py2.py3}
-        mv $whl $new_whl
-        
-        auditwheel repair $new_whl -w $out_dir/
-        # Remove unfixed if writing into same directory
-        if [ "$in_dir" == "$out_dir" ]; then rm $new_whl; fi
-        ls $out_dir/
+    if [ -n "$IS_OSX" ]; then
+        local wheelhouse=$1
+        install_delocate
+        delocate-wheel $wheelhouse/*.whl # copies library dependencies into wheel
+    else
+        for whl in $in_dir/*.whl; do
+            # rename to py2.py3
+            local new_whl=${whl//-py3/-py2.py3}
+            mv $whl $new_whl
+            
+            auditwheel repair $new_whl -w $out_dir/
+            # Remove unfixed if writing into same directory
+            if [ "$in_dir" == "$out_dir" ]; then rm $new_whl; fi
+            ls $out_dir/
+        done
+        chmod -R a+rwX $out_dir
     done
-    chmod -R a+rwX $out_dir
     
 }
 
