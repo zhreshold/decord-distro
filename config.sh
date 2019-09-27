@@ -49,7 +49,7 @@ function repair_wheelhouse {
             # rename to py2.py3
             local new_whl=${whl//-py3/-py2.py3}
             mv $whl $new_whl
-            
+
             auditwheel repair $new_whl -w $out_dir/
             # Remove unfixed if writing into same directory
             if [ "$in_dir" == "$out_dir" ]; then rm $new_whl; fi
@@ -57,7 +57,7 @@ function repair_wheelhouse {
         done
         chmod -R a+rwX $out_dir
     fi
-    
+
 }
 
 function build_wheel_cmd {
@@ -112,4 +112,23 @@ function run_tests {
     python --version
     python -c 'import sys; import decord; sys.exit()'
     python -m unittest test
+}
+
+function clean_code {
+    local repo_dir=${1:-$REPO_DIR}
+    local build_commit=${2:-$BUILD_COMMIT}
+    [ -z "$repo_dir" ] && echo "repo_dir not defined" && exit 1
+    [ -z "$build_commit" ] && echo "build_commit not defined" && exit 1
+    # The package $repo_dir may be a submodule. git submodules do not
+    # have a .git directory. If $repo_dir is copied around, tools like
+    # Versioneer which require that it be a git repository are unable
+    # to determine the version.  Give submodule proper git directory
+    fill_submodule "$repo_dir"
+    (cd $repo_dir \
+        && git fetch origin \
+        && git checkout $build_commit \
+        && git clean -fxd \
+        && git reset --hard \
+        && git pull \
+        && git submodule update --init --recursive)
 }

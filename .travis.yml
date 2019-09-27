@@ -77,4 +77,3 @@ script:
 after_success:
     - echo "after_success"
     - bash ./upload_pypi.sh
-    
