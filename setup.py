@@ -62,7 +62,8 @@ elif 'APPVEYOR_REPO_TAG_NAME' in os.environ and os.environ['APPVEYOR_REPO_TAG_NA
 elif 'TRAVIS_TAG' in os.environ or 'APPVEYOR_REPO_TAG_NAME' in os.environ:
     pass
 else:
-    VERSION += 'b{0}'.format(datetime.today().strftime('%Y%m%d'))
+    # VERSION += 'b{0}'.format(datetime.today().strftime('%Y%m%d'))
+    pass
 
 include_libs = False
 wheel_include_libs = False
