@@ -125,7 +125,8 @@ test_script:
   - call %PIP_EXE% install -U --force-reinstall "decord\python\dist\%wheel_name%"
   - cd %APPVEYOR_BUILD_FOLDER%
   - call %PYTHON_EXE% -c "import decord; print(decord.__version__)"
-  - call %PYTHON_EXE% -m unittest tests/test
+  - cd tests
+  - call %PYTHON_EXE% -m unittest test
 
 artifacts:
   - path: decord\python\dist\*
