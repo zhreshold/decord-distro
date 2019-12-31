@@ -1,0 +1,137 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: 1.0.{build}
+
+# branches to build
+branches:
+  only:
+    - master
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# environment variables
+environment:
+  PYTHON: Python35-x64
+  PYPI_PASSWORD:
+    secure: 3Q7RJFelNX5ptiCrQrnOKg==
+  PYPI_USERNAME:
+    secure: FQrgB9W+kITzpTxXsc1wNw==
+
+matrix:
+  fast_finish: true
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+  - ps: If ($env:APPVEYOR_REPO_TAG -eq "true" ) { write-output "From a tag build"; $GIT_TAG = (echo $env:APPVEYOR_REPO_TAG_NAME | %{$_ -replace "^patch-[^-]*-", ""});  $env:GIT_ADDITIONAL_FLAGS = "-b $GIT_TAG"; write-output $env:GIT_ADDITIONAL_FLAGS} Else { write-output "Not from a tag build"}
+  - ps: If ($env:APPVEYOR_SCHEDULED_BUILD -eq "True" ) { write-output "From a scheduled build" } Else { write-output "Not from a scheduled build"}
+  - set PYTHON_EXE=C:\%PYTHON%\python
+  - set PIP_EXE=C:\%PYTHON%\Scripts\pip
+  - set PYTHON_DIR=C:\%PYTHON%
+  - call %PYTHON_EXE% --version
+  - call %PIP_EXE% --version
+
+# cache:
+  # - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  # - C:\ProgramData\chocolatey\lib -> appveyor.yml
+  # - C:\deps\opencv-install -> windows/make_opencv.cmd
+  # - C:\deps\openblas-install -> windows/make_openblas.cmd
+
+# scripts that run after cloning repository
+install:
+  - echo "install script"
+  - choco install -y pandoc wget
+  - choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+  - refreshenv
+  - pandoc --version
+  - cmake --version
+  - wget --version
+  - call %PIP_EXE% install pypandoc nose wheel twine numpy
+  - SET NOSE_EXE=%PYTHON_DIR%\Scripts\nosetests
+  - SET TWINE_EXE=%PYTHON_DIR%\Scripts\twine
+  - dir %PYTHON_DIR%\Scripts\
+  - call %NOSE_EXE% --version
+  - call %TWINE_EXE% --version
+  - call .\pypirc.cmd
+
+# real work
+build:
+  parallel: true
+  project: decord\build\decord.sln
+
+# scripts to run before build
+before_build:
+  - echo "before build script"
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - git submodule update --recursive --init
+  - wget https://ffmpeg.zeranoe.com/builds/win64/dev/ffmpeg-4.2.1-win64-dev.zip
+  - wget https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-4.2.1-win64-shared.zip
+  - dir
+  - ps: Expand-Archive -LiteralPath $env:APPVEYOR_BUILD_FOLDER\ffmpeg-4.2.1-win64-dev.zip -DestinationPath $env:APPVEYOR_BUILD_FOLDER\
+  - ps: Expand-Archive -LiteralPath $env:APPVEYOR_BUILD_FOLDER\ffmpeg-4.2.1-win64-shared.zip -DestinationPath $env:APPVEYOR_BUILD_FOLDER\
+  - dir %APPVEYOR_BUILD_FOLDER%\ffmpeg-4.2.1-win64-dev\
+  - dir %APPVEYOR_BUILD_FOLDER%\ffmpeg-4.2.1-win64-shared\
+  - SET DECORD_DIR=%APPVEYOR_BUILD_FOLDER%\decord\
+  - echo %DECORD_DIR%
+  - dir %DECORD_DIR%
+  - cd %DECORD_DIR%
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_CXX_FLAGS="/DDECORD_EXPORTS" -DCMAKE_CONFIGURATION_TYPES="Release" -G "Visual Studio 15 2017 Win64" -DFFMPEG_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%\ffmpeg-4.2.1-win64-dev\include -DFFMPEG_LIBRARIES=%APPVEYOR_BUILD_FOLDER%\ffmpeg-4.2.1-win64-dev\lib\*.lib ..
+
+# scripts to run after build
+after_build:
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+
+# scripts to run before tests
+before_test:
+  - echo "before test script"
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - SET DECORD_DIR=%APPVEYOR_BUILD_FOLDER%\decord\
+  - echo %DECORD_DIR%
+  - dir %DECORD_DIR%
+  - xcopy /Y setup.py decord\python\*
+  - xcopy /Y %APPVEYOR_BUILD_FOLDER%\ffmpeg-4.2.1-win64-shared\bin\*.dll decord\python\decord\*
+  - copy %WINDIR%\system32\MSVCP140.dll decord\python\decord\
+  - copy %WINDIR%\system32\VCRUNTIME140.dll decord\python\decord\
+  - cd .\decord
+  - FOR /F "delims=" %%i IN ('git rev-parse HEAD') DO echo %%i > COMMIT_HASH
+  - cd .\python
+  - dir .
+  - call %PYTHON_EXE% setup.py bdist_wheel
+  - cd %DECORD_DIR%\python
+  - FOR /F "tokens=* USEBACKQ" %%F IN (`dir /b /a-d dist\decord*`) DO (SET wheel_name=%%F)
+
+# to run your custom scripts instead of automatic tests
+test_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - echo %wheel_name%
+  - 7z x "decord\python\dist\%wheel_name%" -odebug_wheel
+  - dir
+  - dir debug_wheel\
+  - dir debug_wheel\decord\
+  - call %PIP_EXE% install -U --force-reinstall "decord\python\dist\%wheel_name%"
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - call %PYTHON_EXE% -c "import decord; print(decord.__version__)"
+  - call %PYTHON_EXE% -m unittest tests/test
+
+artifacts:
+  - path: decord\python\dist\*
+    name: pypiartifacts
+
+deploy_script:
+  - cd %APPVEYOR_BUILD_FOLDER%\decord\python\dist\
+  - ps: Get-ChildItem *.whl  |Rename-Item -NewName {$_.name -replace 'py3-none-any','py2.py3-none-win_amd64'}
+  - call %TWINE_EXE% upload -r pypi --skip-existing *.whl

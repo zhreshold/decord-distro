@@ -81,6 +81,7 @@ if wheel_include_libs:
             shutil.copy(path, os.path.join(CURRENT_DIR, 'decord'))
             _, libname = os.path.split(path)
             fo.write("include decord/%s\n" % libname)
+        fo.write("graft decord")
     setup_kwargs = {
         "include_package_data": True
     }
