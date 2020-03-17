@@ -32,20 +32,20 @@ jobs:
         - NP_TEST_DEP=numpy==1.14.5
     - os: osx
       language: generic
-      osx_image: xcode9.2
+      osx_image: xcode10.1
       env:
         - MB_PYTHON_VERSION=3.5
         - NP_BUILD_DEP=numpy==1.14.5
         - NP_TEST_DEP=numpy==1.14.5
     - os: osx
       language: generic
-      osx_image: xcode9.2
+      osx_image: xcode10.1
       env:
         - MB_PYTHON_VERSION=3.6
         - NP_BUILD_DEP=numpy==1.14.5
         - NP_TEST_DEP=numpy==1.14.5
     - os: osx
-      osx_image: xcode9.2
+      osx_image: xcode10.1
       language: generic
       env:
         - MB_PYTHON_VERSION=3.7
