@@ -21,15 +21,11 @@ env:
 
 language: python
 # Default Python version is usually 2.7
-python: 3.5
-sudo: required
+python: 3.7
 dist: trusty
 services: docker
 
-matrix:
-  exclude:
-      # Exclude the default Python 3.5 build
-      - python: 3.5
+jobs:
   include:
     - os: linux
       env:
@@ -77,4 +73,3 @@ script:
 after_success:
     - echo "after_success"
     - bash ./upload_pypi.sh
-
