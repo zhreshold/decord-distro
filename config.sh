@@ -15,7 +15,8 @@ function pre_build {
         export HOMEBREW_NO_AUTO_UPDATE=1
         export HOMEBREW_NO_ANALYTICS=1
         brew unlink python
-        brew install ffmpeg x264 x265 xvid openjpeg libvpx lame yasm --ignore-dependencies
+        brew install ffmpeg --with-libvidstab
+        brew install x264 x265 xvid openjpeg libvpx lame yasm --ignore-dependencies
     else
         echo "pre_build on linux..."
     fi
