@@ -25,9 +25,9 @@ function pre_build {
     pushd build
     if [ -n "$IS_OSX" ]; then
         clang --version
-        cmake .. -DCMAKE_CXX_FLAGS="-arch x86_64" -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_OSX_ARCHITECTURES="x86_64"
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-arch x86_64" -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_OSX_ARCHITECTURES="x86_64"
     else
-        cmake ..
+        cmake .. -DCMAKE_BUILD_TYPE=Release
     fi
     make
     mkdir -p /tmp/build
