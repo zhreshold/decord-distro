@@ -74,8 +74,8 @@ before_build:
   - echo "before build script"
   - cd %APPVEYOR_BUILD_FOLDER%
   - git submodule update --recursive --init
-  - wget https://ffmpeg.zeranoe.com/builds/win64/dev/ffmpeg-4.2.1-win64-dev.zip
-  - wget https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-4.2.1-win64-shared.zip
+  - wget https://github.com/zhreshold/decord-distro/files/5314603/ffmpeg-4.2.1-win64-dev.zip
+  - wget https://github.com/vmlankub/CloudFiles/raw/5ec06ef8b7568cc3b84d310ef146c63c5e693b54/ffmpeg/ffmpeg-4.2.1-win64-shared.zip
   - dir
   - ps: Expand-Archive -LiteralPath $env:APPVEYOR_BUILD_FOLDER\ffmpeg-4.2.1-win64-dev.zip -DestinationPath $env:APPVEYOR_BUILD_FOLDER\
   - ps: Expand-Archive -LiteralPath $env:APPVEYOR_BUILD_FOLDER\ffmpeg-4.2.1-win64-shared.zip -DestinationPath $env:APPVEYOR_BUILD_FOLDER\
